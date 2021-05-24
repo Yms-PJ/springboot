@@ -2,6 +2,7 @@ package springboot.practice.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 import springboot.practice.domain.item.Item;
 
 import javax.persistence.*;
@@ -26,4 +27,30 @@ public class OrderItem {
     private int orderPrice; // 注文価格
     private int count; // 注文数量
 
+
+    //　生成メソッド
+    public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItem(item);
+        orderItem.setOrderPrice(orderPrice);
+        orderItem.setCount(count);
+
+        item.removeStock(count);
+        return orderItem;
+    }
+
+    // ビジネスロジック
+    public void cancel() {
+        getItem().addStock(count);
+    }
+
+    // 照会ロジック
+
+    /**
+     * 注文商品全体価格照会
+     * @return
+     */
+    public int getTotalPrice() {
+        return getOrderPrice() * getCount();
+    }
 }
