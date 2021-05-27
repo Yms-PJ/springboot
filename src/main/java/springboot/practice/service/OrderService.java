@@ -12,6 +12,8 @@ import springboot.practice.repository.ItemRepository;
 import springboot.practice.repository.MemberRepository;
 import springboot.practice.repository.OrderRepository;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -45,4 +47,20 @@ public class OrderService {
 
         return order.getId();
     }
+
+    /**
+     * 注文取消
+     */
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        //注文エンティティ照会
+        Order order = orderRepository.findOne(orderId);
+        //注文取消
+        order.cancel();
+    }
+
+    //検索
+//    public List<Order> findOrders(OrderSearch orderSearch) {
+//        return orderRepository.findAll(orderSearch);
+//    }
 }
