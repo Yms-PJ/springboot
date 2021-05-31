@@ -2,9 +2,13 @@ package springboot.practice.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import springboot.practice.domain.Order;
+import springboot.practice.form.OrderSearch;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,4 +24,37 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
+    public List<Order> findAllByString(OrderSearch orderSearch) {
+        //language=JPAQL
+        String jpql = "select o From Order o join o.member m";
+        boolean isFirstCondition = true;
+        //注文状態検索
+        if (orderSearch.getOrderStatus() != null) {
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " o.status = :status";
+        }
+        //会員名検索
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            if (isFirstCondition) {
+                jpql += " where";
+                isFirstCondition = false;
+            } else {
+                jpql += " and";
+            }
+            jpql += " m.name like :name";
+        } TypedQuery<Order> query = em.createQuery(jpql, Order.class)
+                .setMaxResults(1000); //最大1000件
+        if (orderSearch.getOrderStatus() != null) {
+            query = query.setParameter("status", orderSearch.getOrderStatus());
+        }
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            query = query.setParameter("name", orderSearch.getMemberName());
+        }
+        return query.getResultList();
+    }
 }

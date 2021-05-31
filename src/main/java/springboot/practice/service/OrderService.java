@@ -8,6 +8,7 @@ import springboot.practice.domain.Member;
 import springboot.practice.domain.Order;
 import springboot.practice.domain.OrderItem;
 import springboot.practice.domain.item.Item;
+import springboot.practice.form.OrderSearch;
 import springboot.practice.repository.ItemRepository;
 import springboot.practice.repository.MemberRepository;
 import springboot.practice.repository.OrderRepository;
@@ -59,8 +60,10 @@ public class OrderService {
         order.cancel();
     }
 
-    //検索
-//    public List<Order> findOrders(OrderSearch orderSearch) {
-//        return orderRepository.findAll(orderSearch);
-//    }
+    /**
+     * 検索
+     */
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByString(orderSearch);
+    }
 }
